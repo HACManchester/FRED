@@ -15,7 +15,7 @@ config_f.close()
 mqttc = mosquitto.Mosquitto(config['door']['mqtt_name'])
 mqttc.connect("alfred", 1883, 60, True)
 
-ser = serial.Serial("/dev/alfie", 9600, timeout=0.5)
+ser = serial.Serial(config['serial']['port'], config['serial']['baud'], timeout=0.5)
 
 pygame.mixer.init(44100, -16, 2, 2048)
 pygame.mixer.music.set_volume(1)

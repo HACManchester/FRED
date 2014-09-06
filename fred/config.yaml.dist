@@ -3,3 +3,6 @@ door:
   mqtt_name: alfred_outer
 hardware:
   version: old
+serial:
+  port: /dev/alfie
+  baud: 115200
