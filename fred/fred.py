@@ -87,3 +87,8 @@ while 1:
             logging.info("%s not found!", card_id)
             mqttc.publish("door/%s/invalidcard" % config['door']['name'])
         members_f.close()
+    elif (card_id[0] == 'A'):
+	mqttc.publish("sensor/door/%s/analog/%s" % (config['door']['name'], card_id[1]), card_id.split('-')[1])
+    elif (card_id[0] == 'D'):
+        mqttc.publish("sensor/door/%s/digital/%s" % (config['door']['name'], card_id[1]), card_id.split('-')[1])
+
