@@ -39,7 +39,7 @@ mqttc.publish("door/%s/rebooted" % config['door']['name'])
 ser.write('E')
 
 while 1:
-    mqttc.loop(timeout=50)
+    mqttc.loop()
     card_id = ser.readline().strip()
 
     if card_id:
