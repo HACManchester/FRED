@@ -54,6 +54,9 @@ while 1:
         logging.info('Door Button Pressed')
         mqttc.publish("door/%s/opened/button" % config['door']['name'])
         ser.write('1')
+    elif card_id[0:3] == 'A1-' and int(card_id[3:7]) < 100:
+        logging.info('Doorbell pressed')
+        mqttc.publish("door/%s/doorbell" % config['door']['name'])
     elif (config['hardware']['version'] == 'old' and card_id != '00000000000000') or (card_id[0] == 'C'):
 	if config['hardware']['version'] == 'new':
 		card_id = card_id[1:]
