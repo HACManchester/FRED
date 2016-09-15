@@ -47,9 +47,6 @@ while 1:
 
     if not card_id:
 	pass
-    elif card_id == 'B':
-        logging.info('Buzzer')
-        mqttc.publish("door/%s/buzzer" % config['door']['name'])
     elif card_id == 'D0-0':
         logging.info('Door Button Pressed')
         mqttc.publish("door/%s/opened/button" % config['door']['name'])
