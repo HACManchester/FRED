@@ -1,0 +1,8 @@
+door:
+  name: outer
+mqtt:
+  name: alfred_outer
+  server: acidburn
+serial:
+  port: /dev/ttyAMA0
+  baud: 115200
