@@ -8,10 +8,6 @@ import yaml
 with open('config.yaml') as config_f:
     config = yaml.safe_load(config_f)
 
-if not config:
-    print("Lol you need a config.yaml mate")
-    sys.exit(1)
-
 ser = serial.Serial(config['serial']['port'], config['serial']['baud'], timeout=0.5)
 
 # We want to use a logger
@@ -40,7 +36,7 @@ mqttc.publish("system/%s/state" % config['mqtt']['name'], payload='online', qos=
 mqttc.publish("door/%s/rebooted" % config['door']['name'])
 mqttc.loop_start()
 
-ser.write('E')
+ser.write(b'E')
 
 while True:
     card_id = ser.readline().strip()
@@ -51,7 +47,7 @@ while True:
         if card_id == 'D0-0':
             logging.info('Door Button Pressed')
             mqttc.publish("door/%s/opened/button" % config['door']['name'], qos=2)
-            ser.write('1')
+            ser.write(b'1')
 
         if (card_id[0] == 'C'):
             card_id = card_id[1:]
@@ -61,17 +57,17 @@ while True:
             logging.info("Card ID: %s", card_id)
             found = False
 
-            with members_f as open('members', 'r'):
+            with open('members', 'r') as members_f:
                 for member in members_f.readlines():
                     member = member.strip().split(',')
                     if member[0].startswith(card_id):
-                        ser.write('1')
-                        ser.write('G')
+                        ser.write(b'1')
+                        ser.write(b'G')
                         found = True
                         logging.info("%s found, %s opened the door!", card_id, member[1])
                         mqttc.publish("door/%s/opened/username" % config['door']['name'], member[1], qos=2)
 
             if not found:
-                ser.write('R')
+                ser.write(b'R')
                 logging.info("%s not found!", card_id)
                 mqttc.publish("door/%s/invalidcard" % config['door']['name'], qos=2)
