@@ -39,7 +39,7 @@ mqttc.loop_start()
 ser.write(b'E')
 
 while True:
-    card_id = ser.readline().strip()
+    card_id = ser.readline().decode("utf-8").strip()
 
     if card_id:
         logging.debug(card_id)
