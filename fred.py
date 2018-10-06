@@ -60,7 +60,7 @@ while True:
             with open('members', 'r') as members_f:
                 for member in members_f.readlines():
                     member = member.strip().split(',')
-                    if member[0].startswith(card_id):
+                    if member[0].lower().startswith(card_id):
                         ser.write(b'1')
                         ser.write(b'G')
                         found = True
