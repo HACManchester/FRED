@@ -4,11 +4,14 @@ import sys
 import logging
 import paho.mqtt.client as mqtt
 import yaml
+import requests
+import json
 
 with open('config.yaml') as config_f:
     config = yaml.safe_load(config_f)
 
-ser = serial.Serial(config['serial']['port'], config['serial']['baud'], timeout=0.5)
+ser = serial.Serial(config['serial']['port'],
+                    config['serial']['baud'], timeout=0.5)
 
 # We want to use a logger
 logger = logging.getLogger()
@@ -30,13 +33,31 @@ logger.addHandler(ch)
 logging.info("FRED 1.0")
 
 mqttc = mqtt.Client(config['mqtt']['name'])
-mqttc.will_set("system/%s/state" % config['mqtt']['name'], payload='offline', qos=2, retain=True)
+mqttc.will_set("system/%s/state" %
+               config['mqtt']['name'], payload='offline', qos=2, retain=True)
 mqttc.connect(config['mqtt']['server'], 1883, 60)
-mqttc.publish("system/%s/state" % config['mqtt']['name'], payload='online', qos=2, retain=True)
+mqttc.publish("system/%s/state" %
+              config['mqtt']['name'], payload='online', qos=2, retain=True)
 mqttc.publish("door/%s/rebooted" % config['door']['name'])
 mqttc.loop_start()
 
 ser.write(b'E')
+
+
+def report_activity(card_id):
+    try:
+        url = 'https://members.hacman.org.uk/acs/activity'
+        data = {
+            'tagId': card_id,
+            'device': config['membersystem']['device']
+        }
+        headers = {
+            'ApiKey': config['membersystem']['apiKey']
+        }
+        requests.post(url, data=json.dumps(data), headers=headers)
+    except:
+        logging.error("Error reporting activity for ID % s", card_id)
+
 
 while True:
     card_id = ser.readline().decode("utf-8").strip()
@@ -46,7 +67,8 @@ while True:
 
         if card_id == 'D0-0':
             logging.info('Door Button Pressed')
-            mqttc.publish("door/%s/opened/button" % config['door']['name'], qos=2)
+            mqttc.publish("door/%s/opened/button" %
+                          config['door']['name'], qos=2)
             ser.write(b'1')
 
         if (card_id[0] == 'C'):
@@ -64,10 +86,14 @@ while True:
                         ser.write(b'1')
                         ser.write(b'G')
                         found = True
-                        logging.info("%s found, %s opened the door!", card_id, member[1])
-                        mqttc.publish("door/%s/opened/username" % config['door']['name'], member[1], qos=2)
+                        logging.info(
+                            "%s found, %s opened the door!", card_id, member[1])
+                        mqttc.publish("door/%s/opened/username" %
+                                      config['door']['name'], member[1], qos=2)
+                        report_activity(card_id)
 
             if not found:
                 ser.write(b'R')
                 logging.info("%s not found!", card_id)
-                mqttc.publish("door/%s/invalidcard" % config['door']['name'], qos=2)
+                mqttc.publish("door/%s/invalidcard" %
+                              config['door']['name'], qos=2)
