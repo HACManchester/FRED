@@ -46,14 +46,14 @@ def report_activity(card_id):
         url = 'https://members.hacman.org.uk/acs/activity'
         data = {
             'tagId': card_id,
-            'device': config['membersystem']['device']
+            'device': config['member_system']['device']
         }
         headers = {
-            'ApiKey': config['membersystem']['apiKey']
+            'ApiKey': config['member_system']['api_key']
         }
         requests.post(url, data=json.dumps(data), headers=headers)
     except:
-        logging.error("Error reporting activity for ID % s", card_id)
+        logging.error("Error reporting activity for ID %s", card_id)
 
 
 while True:
