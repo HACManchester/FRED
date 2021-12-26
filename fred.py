@@ -64,8 +64,7 @@ while True:
 
         if card_id == 'D0-0':
             logging.info('Door Button Pressed')
-            mqttc.publish("door/%s/opened/button" %
-                          config['door']['name'], qos=2)
+            mqttc.publish("door/%s/opened/button" % config['door']['name'], qos=2)
             ser.write(b'1')
 
         if (card_id[0] == 'C'):
@@ -83,14 +82,11 @@ while True:
                         ser.write(b'1')
                         ser.write(b'G')
                         found = True
-                        logging.info(
-                            "%s found, %s opened the door!", card_id, member[1])
-                        mqttc.publish("door/%s/opened/username" %
-                                      config['door']['name'], member[1], qos=2)
+                        logging.info("%s found, %s opened the door!", card_id, member[1])
+                        mqttc.publish("door/%s/opened/username" % config['door']['name'], member[1], qos=2)
                         report_activity(card_id)
 
             if not found:
                 ser.write(b'R')
                 logging.info("%s not found!", card_id)
-                mqttc.publish("door/%s/invalidcard" %
-                              config['door']['name'], qos=2)
+                mqttc.publish("door/%s/invalidcard" % config['door']['name'], qos=2)
