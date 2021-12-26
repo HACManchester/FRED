@@ -10,8 +10,7 @@ import json
 with open('config.yaml') as config_f:
     config = yaml.safe_load(config_f)
 
-ser = serial.Serial(config['serial']['port'],
-                    config['serial']['baud'], timeout=0.5)
+ser = serial.Serial(config['serial']['port'], config['serial']['baud'], timeout=0.5)
 
 # We want to use a logger
 logger = logging.getLogger()
@@ -33,11 +32,9 @@ logger.addHandler(ch)
 logging.info("FRED 1.0")
 
 mqttc = mqtt.Client(config['mqtt']['name'])
-mqttc.will_set("system/%s/state" %
-               config['mqtt']['name'], payload='offline', qos=2, retain=True)
+mqttc.will_set("system/%s/state" % config['mqtt']['name'], payload='offline', qos=2, retain=True)
 mqttc.connect(config['mqtt']['server'], 1883, 60)
-mqttc.publish("system/%s/state" %
-              config['mqtt']['name'], payload='online', qos=2, retain=True)
+mqttc.publish("system/%s/state" % config['mqtt']['name'], payload='online', qos=2, retain=True)
 mqttc.publish("door/%s/rebooted" % config['door']['name'])
 mqttc.loop_start()
 
