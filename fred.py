@@ -51,7 +51,7 @@ def report_activity(card_id):
         headers = {
             'ApiKey': config['member_system']['api_key']
         }
-        requests.post(url, data=json.dumps(data), headers=headers)
+        requests.post(url, data=json.dumps(data), headers=headers, timeout=3.05)
     except:
         logging.error("Error reporting activity for ID %s", card_id)
 
