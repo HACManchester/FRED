@@ -6,3 +6,6 @@ mqtt:
 serial:
   port: /dev/ttyAMA0
   baud: 115200
+member_system:
+  api_key: 
+  device:
